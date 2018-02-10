@@ -106,6 +106,7 @@ class Detector(object):
 
 
     def detectDrowsiness(self):
+
         while True:
 
             ret, self.frame = self.cap.read()
