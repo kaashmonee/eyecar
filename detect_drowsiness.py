@@ -15,6 +15,7 @@ import imutils
 import time
 import dlib
 import cv2
+import sys
 
 
 class Detector(object):
@@ -129,7 +130,7 @@ class Detector(object):
 
             if self.counter <= Detector.EYE_CLOSED_CONSEC_FRAMES:
                 # turns on the alarm if alarm is not true
-                alarmOn = True if not self.alarmOn
+                alarmOn = True if not self.alarmOn else False
 
                 # starting a new thread to turn on the alarm sound
                 alarmThread = Thread(target=self.soundAlarm)
