@@ -6,7 +6,7 @@ import numpy as np
 import sys
 import threading
 import time
-from detect_drowsiness import *
+import detect_drowsiness
 
 
 class DetectDrowsy(object):
@@ -43,7 +43,10 @@ class DetectDrowsy(object):
         # put the image on screen
         self.image = img
         self.imageData["image"] = self.image
+        self.imageData['framesElapsed'] += 1
         self.drowsy = self.detector.detectDrowsiness(self.imageData)
+        if self.drowsy:
+            self.imageData['framesElapsed'] = 0
         self.image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
         self.image = cv2.flip(self.image, 1)
         self.image = np.rot90(self.image)
@@ -56,11 +59,10 @@ class DetectDrowsy(object):
         self.frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
         self.frame = self.frame[0:1000, 310:910]
         self.frame = cv2.resize(self.frame, (180, 240), interpolation = cv2.INTER_LINEAR)
-        self.frame = cv2.flip(self.frame, 1)
         self.frame = np.rot90(self.frame)
         self.frame = pygame.surfarray.make_surface(self.frame)
 
-        pygame.display.flip()
+        #pygame.display.flip()
         time.sleep(0.0001)
         # Quit if q is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -108,6 +110,7 @@ class DetectDrowsy(object):
         self.done = False
         while not self.done:
             time = clock.tick(self.frameRate)
+
             self.timerFired()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
