@@ -47,7 +47,9 @@ class Detector(object):
         self.predictor = dlib.shape_predictor(Detector.LANDMARK_DETECTOR)
         # starts the video capture using the webcam (param 0)
         self.cap = cv2.VideoCapture(0)
-        self.imageData = None
+        self.imageData = {"counter": 0, "image": None}
+        
+        self.externalCall = False
 
         # waveRead = wave.open(Detector.ALARM_SOUND_PATH, "rb")
         # self.wavObj = sa.WaveObject.from_wave_read(waveRead)
@@ -105,7 +107,7 @@ class Detector(object):
 
         while True:
             # if the client sends in image data, then we don't use our own
-            if imageData == None:
+            if self.externalCall:
                 ret, self.frame = self.cap.read()
                 self.frame = cv2.flip(self.frame, 1)
                 # self.frame = imutils.resize(self.frame, width=250)
