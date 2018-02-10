@@ -61,7 +61,7 @@ class Detector(object):
     def detectDrowsiness(self):
         while True:
             ret, self.frame = self.cap.read() 
-            self.frame = imutils.resize(self.frame, width=250)
+            # self.frame = imutils.resize(self.frame, width=250)
             self.gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
             cv2.imshow("black and white", self.frame)
 
@@ -86,7 +86,8 @@ class Detector(object):
                 rightEye = shape[eyes.rightEye()[0] : eyes.rightEye()[1]]
                 print("right eye", rightEye)
                 # calculates the eye aspect ratio of each eye
-                self.drawEyes(leftEye, rightEye) 
+                self.drawEyes(leftEye, rightEye)
+                print("Getting here") 
                 leftEAR = self.eyeAspectRatio(leftEye)
                 rightEAR = self.eyeAspectRatio(rightEye)
 
@@ -108,6 +109,7 @@ class Detector(object):
 class EyeLandmark(object):
 
     def __init__(self, leftTuple, rightTuple):
+        
         self.leftTuple = leftTuple
         self.rightTuple = rightTuple
 
