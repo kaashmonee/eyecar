@@ -20,6 +20,7 @@ import cv2
 class Detector(object):
 
     LANDMARK_DETECTOR = "./assets/shape_predictor_68_face_landmarks.dat"
+    ALARM_SOUND_PATH = "./assets/Airhorn-SoundBible.com-975027544.wav"
 
     EYE_ASP_RAT_THRESHOLD = 0.3
     EYE_CLOSED_CONSEC_FRAMES = 48
@@ -97,11 +98,14 @@ class Detector(object):
                 rightEye = shape[eyes.rightEye()[0] : eyes.rightEye()[1]]
                 # print("right eye", rightEye)
                 # calculates the eye aspect ratio of each eye
-                self.drawEyes(leftEye, rightEye)
+                
                 leftEAR = self.eyeAspectRatio(leftEye)
                 rightEAR = self.eyeAspectRatio(rightEye)
 
                 ear = (leftEAR + rightEAR) / 2.0
+
+                self.drawEyes(leftEye, rightEye)
+                self.detectSleepy(ear)
 
             cv2.imshow("frame", self.frame)
             if cv2.waitKey(1) & 0xFF == ord("q"):
@@ -127,8 +131,25 @@ class Detector(object):
                 # turns on the alarm if alarm is not true
                 alarmOn = True if not self.alarmOn
 
+                # starting a new thread to turn on the alarm sound
+                alarmThread = Thread(target=self.soundAlarm)
+                alarmThread.daemon = True
+                alarmThread.start()
+
+                # alerting the user that there is some drowsiness on 
+                # the screen
+                cv2.putText(self.frame, "fuckface you are drowsy", (10, 30), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
+                cv2.putText(self.frame, "EAR: {:.2f}".format(ear), (300, 30),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
             
+        else:
+            self.counter = 0
+            self.alarmOn = False
+
+        
 
 
 
