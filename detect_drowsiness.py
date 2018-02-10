@@ -53,13 +53,15 @@ class Detector(object):
 
     def getFacialLandmarks(self):
         (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
+        print("lStart", lStart, "lEnd", lEnd)
         (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]
+        return EyeLandmark((lStart, lEnd), (rStart, rEnd))
 
     
     def detectDrowsiness(self):
         while True:
             ret, self.frame = self.cap.read() 
-            # self.frame = imutils.resize(self.frame, width=250)
+            self.frame = imutils.resize(self.frame, width=250)
             self.gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
             cv2.imshow("black and white", self.gray)
 
@@ -68,25 +70,16 @@ class Detector(object):
 
             # detects faces in grayscale form
             self.rects = self.detector(self.gray, 0)
-            print("Type rects:", self.rects)
+            # print("Type rects:", self.rects)
 
             for rect in self.rects:
                 # determines the facial landmakrs for the face region,
                 # converts the facial (x,y) coordinates to a numpy array
                 shape = self.predictor(self.gray, rect)
-                print("shape type: ", shape)
+                # print("shape type: ", shape)
                 shape = face_utils.shape_to_np(shape)
-                print("Shape type: ", shape)
+                # print("Shape type: ", shape)
 
-
-        # detect faces in the grayscale image
-
-
-
-        # MIGHT NEED TO CHANGE ABOVE PARAMETER
-
-        # compute the euclidean distance between the horizontal  
-        # eye landmarks
 
 class EyeLandmark(object):
 
