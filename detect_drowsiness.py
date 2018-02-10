@@ -167,7 +167,8 @@ class Detector(object):
         # threshold
         if ear < Detector.EYE_ASP_RAT_THRESHOLD:
             self.counter += 1
-            self.imageData["framesElapsed"] += 1
+            if not self.externalCall:
+                self.imageData["framesElapsed"] += 1
 
 
             if self.imageData["framesElapsed"] >= Detector.EYE_CLOSED_CONSEC_FRAMES:
