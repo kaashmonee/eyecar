@@ -102,7 +102,7 @@ class Detector(object):
         # that represent the right eye and the left eye
         return EyeLandmark((lStart, lEnd), (rStart, rEnd))
 
-    
+
     def detectDrowsiness(self, imageData=None):
 
         while True:
@@ -166,7 +166,7 @@ class Detector(object):
             self.counter += 1
             if externalCall:
                 self.imageData["framesElapsed"] += 1
-            
+
 
             if self.counter >= Detector.EYE_CLOSED_CONSEC_FRAMES:
                 # turns on the alarm if alarm is not true
