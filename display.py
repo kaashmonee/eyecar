@@ -45,8 +45,8 @@ class DetectDrowsy(object):
         self.imageData["image"] = self.image
         self.imageData['framesElapsed'] += 1
         self.drowsy = self.detector.detectDrowsiness(self.imageData)
-        if self.drowsy:
-            self.imageData['framesElapsed'] = 0
+        #if self.drowsy:
+            #self.imageData['framesElapsed'] = 0
         self.image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
         self.image = cv2.flip(self.image, 1)
         self.image = np.rot90(self.image)
