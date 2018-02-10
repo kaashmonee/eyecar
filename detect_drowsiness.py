@@ -24,7 +24,7 @@ class Detector(object):
     ALARM_SOUND_PATH = "./assets/Airhorn-SoundBible.com-975027544.wav"
 
     EYE_ASP_RAT_THRESHOLD = 0.3
-    EYE_CLOSED_CONSEC_FRAMES = 48
+    EYE_CLOSED_CONSEC_FRAMES = 20
 
 
     ALARM_SOUND_PATH = "path"
@@ -77,7 +77,8 @@ class Detector(object):
     def detectDrowsiness(self):
         while True:
 
-            ret, self.frame = self.cap.read() 
+            ret, self.frame = self.cap.read()
+            self.frame = cv2.flip(self.frame, 1)
             # self.frame = imutils.resize(self.frame, width=250)
             self.gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
             # converts from color to grayscale
@@ -128,7 +129,7 @@ class Detector(object):
         if ear < Detector.EYE_ASP_RAT_THRESHOLD:
             self.counter += 1
 
-            if self.counter <= Detector.EYE_CLOSED_CONSEC_FRAMES:
+            if self.counter >= Detector.EYE_CLOSED_CONSEC_FRAMES:
                 # turns on the alarm if alarm is not true
                 alarmOn = True if not self.alarmOn else False
 
