@@ -31,11 +31,6 @@ class Detector(object):
 
     LANDMARK_DETECTOR = "./assets/shape_predictor_68_face_landmarks.dat"
     ALARM_SOUND_PATH = "./assets/alarm.wav"
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> d58cfd0c06ca0ad8597a867d1b07523f377426db
 
     EYE_ASP_RAT_THRESHOLD = 0.3
     EYE_CLOSED_CONSEC_FRAMES = 20
@@ -52,6 +47,7 @@ class Detector(object):
         self.predictor = dlib.shape_predictor(Detector.LANDMARK_DETECTOR)
         # starts the video capture using the webcam (param 0)
         self.cap = cv2.VideoCapture(0)
+        self.imageData = None
 
         # waveRead = wave.open(Detector.ALARM_SOUND_PATH, "rb")
         # self.wavObj = sa.WaveObject.from_wave_read(waveRead)
@@ -104,14 +100,20 @@ class Detector(object):
         # that represent the right eye and the left eye
         return EyeLandmark((lStart, lEnd), (rStart, rEnd))
 
-
-    def detectDrowsiness(self):
+    
+    def detectDrowsiness(self, imageData=None):
 
         while True:
+            # if the client sends in image data, then we don't use our own
+            if imageData == None:
+                ret, self.frame = self.cap.read()
+                self.frame = cv2.flip(self.frame, 1)
+                # self.frame = imutils.resize(self.frame, width=250)
+            else:
+                self.imageData = imageData
+                self.frame = self.imageData["image"]
+                self.counter = self.imageData["framesElapsed"]
 
-            ret, self.frame = self.cap.read()
-            self.frame = cv2.flip(self.frame, 1)
-            # self.frame = imutils.resize(self.frame, width=250)
             self.gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
             # converts from color to grayscale
 
@@ -139,7 +141,7 @@ class Detector(object):
                 ear = (leftEAR + rightEAR) / 2.0
 
                 self.drawEyes(leftEye, rightEye)
-                self.detectSleepy(ear)
+                self.detectSleepy(ear, self.imageData == None)
 
             cv2.imshow("frame", self.frame)
             if cv2.waitKey(1) & 0xFF == ord("q"):
@@ -154,12 +156,15 @@ class Detector(object):
         cv2.drawContours(self.frame, [leftEyeHull], -1, (0, 255, 0), 1)
         cv2.drawContours(self.frame, [rightEyeHull], -1, (0, 255, 0), 1)
 
-    def detectSleepy(self, ear):
+    def detectSleepy(self, ear, externalCall):
         # function to determine if the person is actually drowsy or not
         # if the aspect ratio of the eyes closed is smaller than the necessary
         # threshold
         if ear < Detector.EYE_ASP_RAT_THRESHOLD:
             self.counter += 1
+            if externalCall:
+                self.imageData["framesElapsed"] += 1
+            
 
             if self.counter >= Detector.EYE_CLOSED_CONSEC_FRAMES:
                 # turns on the alarm if alarm is not true
@@ -177,9 +182,14 @@ class Detector(object):
 
                 cv2.putText(self.frame, "EAR: {:.2f}".format(ear), (300, 30),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+            if externalCall:
+                return True
 
 
         else:
+            if externalCall:
+                self.imageData["framesElapsed"] = 0
+                return False
             self.counter = 0
             self.alarmOn = False
 
