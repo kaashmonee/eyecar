@@ -1,7 +1,7 @@
 import pygame
 import math
 import cv2
-import urllib.request
+import urllib
 import numpy as np
 import sys
 import threading
@@ -24,7 +24,7 @@ class DetectDrowsy(object):
     def timerFired(self):
 
         #host = "128.237.204.25:8080/shot.jpg"
-        host = "128.237.136.203:8080/shot.jpg"
+        host = "128.237.204.25:8080/shot.jpg"
 
         if len(sys.argv)>1:
             host = sys.argv[1]
@@ -41,6 +41,7 @@ class DetectDrowsy(object):
         self.image = img
         self.imageData["image"] = self.image
         self.drowsy = self.detector.detectDrowsiness(self.imageData)
+        print("is drowsy working", self.drowsy)
         self.image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
         self.image = cv2.flip(self.image, 1)
         self.image = np.rot90(self.image)
@@ -48,6 +49,7 @@ class DetectDrowsy(object):
         pygame.display.flip()
         time.sleep(0.0001)
         # Quit if q is pressed
+        self.imageData["framesElapsed"] += 1
         if cv2.waitKey(1) & 0xFF == ord('q'):
             self.done = True
 
