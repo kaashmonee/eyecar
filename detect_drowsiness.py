@@ -101,7 +101,7 @@ class Detector(object):
         return EyeLandmark((lStart, lEnd), (rStart, rEnd))
 
     
-    def detectDrowsiness(self):
+    def detectDrowsiness(self, imageData=None):
         while True:
 
             ret, self.frame = self.cap.read()
