@@ -56,11 +56,41 @@ class Detector(object):
 
     
     def detectDrowsiness(self):
-        self.videoStream = VideoStream("webcam").start() # LOOK AT THIS PARAM
+        while True:
+            self.videoStream = VideoStream("webcam").start() # LOOK AT THIS PARAM
+            self.frame = self.videoStream.read()
+            self.frame = imutils.resize(self.frame, width=250)
+            self.gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
+
+            # detects faces in grayscale form
+            self.rects = self.detector(self.gray, 0)
+            print("Type rects:", self.rects)
+
+            for rect in self.rects:
+                # determines the facial landmakrs for the face region,
+                # converts the facial (x,y) coordinates to a numpy array
+                shape = self.predictor(self.gray, rect)
+                print("shape type: ", shape)
+                shape = face_utils.shape_to_np(shape)
+                print("Shape type: ", shape)
+
+
+        # detect faces in the grayscale image
+
+
+
         # MIGHT NEED TO CHANGE ABOVE PARAMETER
 
         # compute the euclidean distance between the horizontal  
-        # eye landmark 
+        # eye landmarks
+        
+
+def main():
+    d = Detector()
+    d.detectDrowsiness()
+
+if __name__ == "__main__":
+    main()
 
 
 
