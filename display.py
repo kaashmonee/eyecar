@@ -1,4 +1,7 @@
 import pygame
+import socket
+from time import sleep
+from time import time
 import math
 import cv2
 import urllib.request
@@ -8,6 +11,8 @@ import threading
 import time
 import detect_drowsiness
 
+carhost = '192.168.43.252'
+port = 5566
 
 class DetectDrowsy(object):
     def __init__(self, width=500, height=500):
@@ -66,6 +71,7 @@ class DetectDrowsy(object):
         if self.drowsy:
             self.imageData['framesElapsed'] = 0
             print("drowsy")
+            #transmit('stop')
 
         self.frame = self.frame[0:1000, 310:910]
         self.frame = cv2.resize(self.frame, (180, 240), interpolation = cv2.INTER_LINEAR)
@@ -98,15 +104,24 @@ class DetectDrowsy(object):
 
         if self.drowsy or self.threshold % 12000 != 0:
             self.threshold += pygame.time.Clock().get_time() + 1000
-            message = "YOU ARE SLEEP! YOU WILL STOP DRIVING!"
+            message = "YOU ARE SLEEPY! YOU WILL STOP DRIVING!"
             text = pygame.font.SysFont('monospace', 40).render(message, 1,(255, 0, 0))
             screen.blit(text, (self.width * .07, self.height * .1))
 
     def keyPressed(self, keyCode, modifier):
-        if keyCode == pygame.K_LEFT and self.angle < 60:
-            self.angle += 10
-        elif keyCode == pygame.K_RIGHT and self.angle > -60:
-            self.angle -= 10
+        if not self.drowsy and not self.threshold % 12000 != 0:
+            if keyCode == pygame.K_LEFT and self.angle < 60:
+                self.angle += 10
+                #transmit('left')
+            elif keyCode == pygame.K_RIGHT and self.angle > -60:
+                self.angle -= 10
+                #transmit('right')
+            elif keyCode == pygame.K_UP:
+                pass
+                #transmit('forward')
+            elif keyCode == pygame.K_DOWN:
+                pass
+                #transmit('back')
 
     def rot_center(self,image, angle):
         """rotate an image while keeping its center and size"""
@@ -140,7 +155,26 @@ class DetectDrowsy(object):
             pygame.display.flip()
         pygame.quit()
 
+def setup():
+  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  sock.connect((carhost, port))
+  print("Connected to " + carhost)
+  return sock
+
+def transmit(message):
+  global s
+  if s is not None:
+    send(s, message)
+    return "Sent " + message
+
+def send(s, message):
+    s.send(str.encode(message))
+    s.close()
+    return
+
 def main():
+    global s
+    #s = setup()
     drive = DetectDrowsy(960, 720)
     drive.run()
 
