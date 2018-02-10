@@ -94,13 +94,10 @@ class Detector(object):
                 # Left and right eye is the coordinates of the left eye that the
                 # eye aspect ratio function uses. 
                 leftEye = shape[eyes.leftEye()[0] : eyes.leftEye()[1]]
-                # print("left eye", leftEye) 
                 rightEye = shape[eyes.rightEye()[0] : eyes.rightEye()[1]]
                 # print("right eye", rightEye)
                 # calculates the eye aspect ratio of each eye
                 self.drawEyes(leftEye, rightEye)
-                # cv2.imshow("test", self.frame) 
-                # print("Getting here") 
                 leftEAR = self.eyeAspectRatio(leftEye)
                 rightEAR = self.eyeAspectRatio(rightEye)
 
@@ -116,14 +113,10 @@ class Detector(object):
     def drawEyes(self, leftEye, rightEye):
         leftEyeHull = cv2.convexHull(leftEye)
         rightEyeHull = cv2.convexHull(rightEye)
-        # print("leftEyeHull", leftEyeHull)
-        # print("rightEyeHull", rightEyeHull)
         cv2.drawContours(self.frame, [leftEyeHull], -1, (0, 255, 0), 1)
         cv2.drawContours(self.frame, [rightEyeHull], -1, (0, 255, 0), 1)
 
 
-
-                # print("Shape type: ", shape)
 
 
 class EyeLandmark(object):
