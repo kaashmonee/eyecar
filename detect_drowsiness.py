@@ -117,7 +117,7 @@ class Detector(object):
             else:
                 self.imageData = imageData
 
-            self.gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
+            self.gray = cv2.cvtColor(self.imageData["image"], cv2.COLOR_BGR2GRAY)
             # converts from color to grayscale
 
             # detects faces in grayscale form
@@ -148,7 +148,7 @@ class Detector(object):
 
             
             
-            cv2.imshow("frame", self.frame)
+            cv2.imshow("frame", self.imageData["image"])
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 sys.exit(0)
 

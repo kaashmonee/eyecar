@@ -6,7 +6,7 @@ import numpy as np
 import sys
 import threading
 import time
-import detect_drowsiness
+import detect_drowsiness as detector
 
 
 class DetectDrowsy(object):
@@ -19,7 +19,7 @@ class DetectDrowsy(object):
         self.frameRate = 5
         self.done = False
         self.image = []
-        self.detector = Detector()
+        self.detector = detector.Detector()
         self.imageData = {"image": None, "framesElapsed": 0}
         self.camera = cv2.VideoCapture(0)
 
