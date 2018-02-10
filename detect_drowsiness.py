@@ -38,7 +38,7 @@ class Detector(object):
         # plays an alarm sound
         playsound.playsound(Detector.ALARM_SOUND_PATH)
         
-    def eyeAspectRatio(eye):
+    def eyeAspectRatio(self, eye):
         # compute the euclidean distances between the 
         # two sets of vertical landmarks for eyes
         A = dist.euclidean(eye[1], eye[5])
@@ -51,7 +51,7 @@ class Detector(object):
 
         return ear
 
-    def getFacialLandmarks(self):
+    def getEyeLandmarks(self):
         (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
         print("lStart", lStart, "lEnd", lEnd)
         (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]
@@ -78,6 +78,22 @@ class Detector(object):
                 shape = self.predictor(self.gray, rect)
                 # print("shape type: ", shape)
                 shape = face_utils.shape_to_np(shape)
+                eyes = self.getEyeLandmarks()
+                # Left and right eye is the coordinates of the left eye that the
+                # eye aspect ratio function uses. 
+                leftEye = shape[eyes.leftEye()[0] : eyes.leftEye()[1]]
+                print("left eye", leftEye) 
+                rightEye = shape[eyes.rightEye()[0] : eyes.rightEye()[1]]
+                print("right eye", rightEye)
+                # calculates the eye aspect ratio of each eye
+                leftEAR = self.eyeAspectRatio(leftEye)
+                rightEAR = self.eyeAspectRatio(rightEye)
+
+                ear = (leftEAR + rightEAR) / 2.0
+
+    def drawEyes(self, )
+
+
                 # print("Shape type: ", shape)
 
 
@@ -91,7 +107,7 @@ class EyeLandmark(object):
         return self.rightTuple
     
     def leftEye(self):
-        return self.leftEye
+        return self.leftTuple
         
 
 def main():
