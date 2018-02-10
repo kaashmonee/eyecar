@@ -19,7 +19,7 @@ class DetectDrowsy(object):
         self.frameRate = 5
         self.done = False
         self.image = []
-        self.detector = detect_drowsiness.Detector()
+        self.detector = Detector()
         self.imageData = {"image": None, "framesElapsed": 0}
         self.camera = cv2.VideoCapture(0)
 

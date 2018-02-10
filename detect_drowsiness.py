@@ -145,6 +145,8 @@ class Detector(object):
                 self.drawEyes(leftEye, rightEye)
                 self.detectSleepy(ear, self.imageData == None)
 
+            
+             
             cv2.imshow("frame", self.frame)
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 sys.exit(0)
