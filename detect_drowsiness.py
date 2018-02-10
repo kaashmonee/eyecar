@@ -88,11 +88,17 @@ class Detector(object):
         # compute the euclidean distance between the horizontal  
         # eye landmarks
 
-class Landmark(object):
+class EyeLandmark(object):
 
     def __init__(self, leftTuple, rightTuple):
         self.leftTuple = leftTuple
         self.rightTuple = rightTuple
+
+    def rightEye(self):
+        return self.rightTuple
+    
+    def leftEye(self):
+        return self.leftEye
         
 
 def main():
