@@ -63,7 +63,7 @@ class Detector(object):
             ret, self.frame = self.cap.read() 
             self.frame = imutils.resize(self.frame, width=250)
             self.gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
-            cv2.imshow("black and white", self.gray)
+            cv2.imshow("black and white", self.frame)
 
             if cv2.waitKey(1) & 0xFF == ord("q"):
                     break
@@ -86,12 +86,20 @@ class Detector(object):
                 rightEye = shape[eyes.rightEye()[0] : eyes.rightEye()[1]]
                 print("right eye", rightEye)
                 # calculates the eye aspect ratio of each eye
+                self.drawEyes(leftEye, rightEye) 
                 leftEAR = self.eyeAspectRatio(leftEye)
                 rightEAR = self.eyeAspectRatio(rightEye)
 
                 ear = (leftEAR + rightEAR) / 2.0
 
-    def drawEyes(self, )
+    def drawEyes(self, leftEye, rightEye):
+        leftEyeHull = cv2.convexHull(leftEye)
+        rightEyeHull = cv2.convexHull(rightEye)
+        print("leftEyeHull", leftEyeHull)
+        print("rightEyeHull", rightEyeHull)
+        cv2.drawContours(self.frame, [leftEyeHull], -1, (0, 255, 0), 1)
+        cv2.drawContours(self.frame, [rightEyeHull], -1, (0, 255, 0), 1)
+
 
 
                 # print("Shape type: ", shape)
@@ -116,7 +124,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-    
