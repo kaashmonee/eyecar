@@ -53,7 +53,7 @@ class Detector(object):
         # calculates the euclidean distance (distance) between two vertical 
         # points
         A = dist.euclidean(eye[1], eye[5])
-        B = dist.euclidean(eye[2], eye[4])
+        B = dist.euclidean(eye[2], eye[4])      # print("Shape type: ", shape)
 
         # compute the distance between the horizontal eye landmark
         # calculates horizontal euclidean distance
@@ -115,6 +115,20 @@ class Detector(object):
         rightEyeHull = cv2.convexHull(rightEye)
         cv2.drawContours(self.frame, [leftEyeHull], -1, (0, 255, 0), 1)
         cv2.drawContours(self.frame, [rightEyeHull], -1, (0, 255, 0), 1)
+
+    def detectSleepy(self, ear):
+        # function to determine if the person is actually drowsy or not
+        # if the aspect ratio of the eyes closed is smaller than the necessary
+        # threshold
+        if ear < Detector.EYE_ASP_RAT_THRESHOLD:
+            self.counter += 1
+
+            if self.counter <= Detector.EYE_CLOSED_CONSEC_FRAMES:
+                # turns on the alarm if alarm is not true
+                alarmOn = True if not self.alarmOn
+
+
+            
 
 
 
