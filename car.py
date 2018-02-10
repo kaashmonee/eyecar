@@ -16,7 +16,7 @@ speedLeft = MAX_SPEED / 2
 speedRight = MAX_SPEED / 2
 
 host = '192.168.43.252'
-port = 5567
+port = 5566
 
 global left
 global right
@@ -26,8 +26,6 @@ global turningRight
 turningRight = False
 global reversing
 reversing = False
-global moving
-moving = False
 
 storedTime = time.time()
 
@@ -59,8 +57,8 @@ def setupPins():
 
 def testMotors():
     global left, right
-    left.ChangeDutyCycle(0)
-    right.ChangeDutyCycle(0)
+    left.ChangeDutyCycle(50)
+    right.ChangeDutyCycle(50)
     setLogicPinsFwd()
 
 def setupServer():
@@ -83,24 +81,27 @@ def dataTransfer(conn):
     while True:
         data = conn.recv(1024) # receive the data
         data = str(data.decode('utf-8'))
-        dataMessage = data.split(' ')
-        command = int(dataMessage[0], 2)
-        print(command)
-        if command == 0b111:
-            self_drive()
-        elif command == 0b110:
-            stop()
-        elif command & 0b001 == 1: #turn right
+        #print("data:")
+        #print(data)
+        command = data.split(' ')[0]
+        #print(dataMessage)
+        #command = int(dataMessage[0], 2)
+        #print(command)
+        if command == 'right':
             turn(0)
-        elif command & 0b001 == 0: #turn left
+        elif command == 'left':
             turn(2)
-        elif command >> 1 & 0b001 == 1:
+        elif command == 'forward': #turn right
             setLogicPinsFwd()
-        elif command >> 1 & 0b001 == 0:
+            turn(1)
+        elif command == 'back': #turn left
             setLogicPinsBwd()
+            turn(1)
+        elif command == 'stop':
+            turn(3)
         else:
             stopHammerTime = True
-        conn.sendall("sending".encode('utf-8'))
+        #conn.sendall("sending".encode('utf-8'))
         break
         
 def turn(direction):
@@ -111,20 +112,23 @@ def turn(direction):
     elif direction == 1:
         speedLeft = 60
         speedRight = 60
-    else:
+    elif direction == 2:
         speedLeft = 70
         speedRight = 30
-    if moving:    
-        right.ChangeDutyCycle(speedLeft)
-        left.ChangeDutyCycle(speedRight)
+    else:
+        speedLeft = 0
+        speedRight = 0
+    
+    right.ChangeDutyCycle(speedLeft)
+    left.ChangeDutyCycle(speedRight)
         
-def setLogicPinsFwd():
+def setLogicPinsBwd():
     GPIO.output(motorInputPinLeft1, GPIO.LOW)
     GPIO.output(motorInputPinRight2, GPIO.HIGH)
     GPIO.output(motorInputPinRight1, GPIO.LOW)
     GPIO.output(motorInputPinLeft2, GPIO.HIGH)
 
-def setLogicPinsBwd():
+def setLogicPinsFwd():
     GPIO.output(motorInputPinLeft1, GPIO.HIGH)
     GPIO.output(motorInputPinRight2, GPIO.LOW)
     GPIO.output(motorInputPinRight1, GPIO.HIGH)
@@ -134,9 +138,8 @@ setupPins()
 s = setupServer()
 
 #testMotors()
-moving = False
 #onDoubleBlink()
-
+#time.sleep(1)
 conn = setupConnection()
 while not stopHammerTime:
     try:
