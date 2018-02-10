@@ -25,15 +25,6 @@ while(1):
                 center = i % width  - (count / 2)
                 break
             i+=1
-
-    cv2.imshow('frame',frame)
-    #cv2.imshow('mask',mask)
-    #cv2.imshow('res',res)
-    #cv2.imshow('gaus', gaus)
-    cv2.imshow('threshold', threshold)
-    k = cv2.waitKey(5) & 0xFF
-    if k == 27:
-        break
             
             
     
@@ -48,7 +39,14 @@ while(1):
     #mask = cv2.inRange(hsv, lower_black, upper_black)
     #res = cv2.bitwise_and(frame,frame, mask= mask)
 
-    
+    cv2.imshow('frame',frame)
+    #cv2.imshow('mask',mask)
+    #cv2.imshow('res',res)
+    #cv2.imshow('gaus', gaus)
+    cv2.imshow('threshold', threshold)
+    k = cv2.waitKey(5) & 0xFF
+    if k == 27:
+        break
 
 cv2.destroyAllWindows()
 cap.release()
