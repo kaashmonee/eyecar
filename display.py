@@ -26,8 +26,8 @@ class DetectDrowsy(object):
 
     def timerFired(self):
 
-        # host = "128.237.204.25:8080/shot.jpg"
-        host = "128.237.136.203:8080/shot.jpg"
+        host = "128.237.204.25:8080/shot.jpg"
+        # host = "128.237.136.203:8080/shot.jpg"
 
         if len(sys.argv)>1:
             host = sys.argv[1]
@@ -96,7 +96,7 @@ class DetectDrowsy(object):
             (self.width*.13,
             self.height*.53))
 
-        if self.drowsy or self.threshold % 7000 != 0:
+        if self.drowsy or self.threshold % 12000 != 0:
             self.threshold += pygame.time.Clock().get_time() + 1000
             message = "YOU ARE SLEEP! YOU WILL STOP DRIVING!"
             text = pygame.font.SysFont('monospace', 40).render(message, 1,(255, 0, 0))

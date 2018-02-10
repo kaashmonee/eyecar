@@ -32,8 +32,8 @@ class Detector(object):
     LANDMARK_DETECTOR = "./assets/shape_predictor_68_face_landmarks.dat"
     ALARM_SOUND_PATH = "./assets/alarm.wav"
 
-    EYE_ASP_RAT_THRESHOLD = 0.3
-    EYE_CLOSED_CONSEC_FRAMES = 20
+    EYE_ASP_RAT_THRESHOLD = 0.5
+    EYE_CLOSED_CONSEC_FRAMES = 40
 
 
     def __init__(self):
