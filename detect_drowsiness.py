@@ -27,24 +27,36 @@ class Detector(object):
 
     ALARM_SOUND_PATH = "path"
     def __init__(self):
+        # counts the number of frames that have passed since eyes closed
         self.counter = 0
+        # initial status of alarm = off
         self.alarmOn = False
+        # initializes the detector which detects faces
         self.detector = dlib.get_frontal_face_detector()
+        # initializes the facial landmarks predictor
         self.predictor = dlib.shape_predictor(Detector.LANDMARK_DETECTOR)
+        # starts the video capture using the webcam (param 0)  
         self.cap = cv2.VideoCapture(0)
-
 
     def soundAlarm(self):
         # plays an alarm sound
         playsound.playsound(Detector.ALARM_SOUND_PATH)
+
         
     def eyeAspectRatio(self, eye):
         # compute the euclidean distances between the 
         # two sets of vertical landmarks for eyes
+        # print("eye", eye)
+        # list of coordinates that are numpy arrays that contain important
+        # featuers of each eye
+
+        # calculates the euclidean distance (distance) between two vertical 
+        # points
         A = dist.euclidean(eye[1], eye[5])
         B = dist.euclidean(eye[2], eye[4])
 
         # compute the distance between the horizontal eye landmark
+        # calculates horizontal euclidean distance
         C = dist.euclidean(eye[0], eye[3])
         # this returns the aspect ratio from 
         ear = (A + B) / (2.0 * C)
@@ -53,20 +65,20 @@ class Detector(object):
 
     def getEyeLandmarks(self):
         (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
-        print("lStart", lStart, "lEnd", lEnd)
+        # print("lStart", lStart, "lEnd", lEnd)
         (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]
+        # starting and ending indices of the landmakrs for the features
+        # that represent the right eye and the left eye
         return EyeLandmark((lStart, lEnd), (rStart, rEnd))
 
     
     def detectDrowsiness(self):
         while True:
+
             ret, self.frame = self.cap.read() 
             # self.frame = imutils.resize(self.frame, width=250)
             self.gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
-            cv2.imshow("black and white", self.frame)
-
-            if cv2.waitKey(1) & 0xFF == ord("q"):
-                    break
+            # converts from color to grayscale
 
             # detects faces in grayscale form
             self.rects = self.detector(self.gray, 0)
@@ -82,24 +94,32 @@ class Detector(object):
                 # Left and right eye is the coordinates of the left eye that the
                 # eye aspect ratio function uses. 
                 leftEye = shape[eyes.leftEye()[0] : eyes.leftEye()[1]]
-                print("left eye", leftEye) 
+                # print("left eye", leftEye) 
                 rightEye = shape[eyes.rightEye()[0] : eyes.rightEye()[1]]
-                print("right eye", rightEye)
+                # print("right eye", rightEye)
                 # calculates the eye aspect ratio of each eye
                 self.drawEyes(leftEye, rightEye)
-                print("Getting here") 
+                # cv2.imshow("test", self.frame) 
+                # print("Getting here") 
                 leftEAR = self.eyeAspectRatio(leftEye)
                 rightEAR = self.eyeAspectRatio(rightEye)
 
                 ear = (leftEAR + rightEAR) / 2.0
 
+            cv2.imshow("frame", self.frame)
+            if cv2.waitKey(1) & 0xFF == ord("q"):
+                sys.exit(0)
+
+            print("Loop terminates")
+
+
     def drawEyes(self, leftEye, rightEye):
         leftEyeHull = cv2.convexHull(leftEye)
         rightEyeHull = cv2.convexHull(rightEye)
-        print("leftEyeHull", leftEyeHull)
-        print("rightEyeHull", rightEyeHull)
-        cv2.drawContours(self.frame, leftEyeHull, -1, (0, 255, 0), 1)
-        cv2.drawContours(self.frame, rightEyeHull, -1, (0, 255, 0), 1)
+        # print("leftEyeHull", leftEyeHull)
+        # print("rightEyeHull", rightEyeHull)
+        cv2.drawContours(self.frame, [leftEyeHull], -1, (0, 255, 0), 1)
+        cv2.drawContours(self.frame, [rightEyeHull], -1, (0, 255, 0), 1)
 
 
 
