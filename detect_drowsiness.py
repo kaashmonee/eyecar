@@ -47,7 +47,7 @@ class Detector(object):
         self.predictor = dlib.shape_predictor(Detector.LANDMARK_DETECTOR)
         # starts the video capture using the webcam (param 0)
         self.cap = cv2.VideoCapture(0)
-        self.imageData = {"counter": 0, "image": None}
+        self.imageData = {"framesElapsed": 0, "image": None}
         
         self.externalCall = False
 
@@ -112,7 +112,8 @@ class Detector(object):
 
             if not self.externalCall:
                 ret, self.frame = self.cap.read()
-                self.imageData["image"] = self.frame.flip(1)
+                self.imageData["image"] = self.frame
+                self.imageData["image"] = cv2.flip(self.imageData["image"], 1)
                 # self.frame = imutils.resize(self.frame, width=250)
             else:
                 self.imageData = imageData
@@ -158,8 +159,8 @@ class Detector(object):
     def drawEyes(self, leftEye, rightEye):
         leftEyeHull = cv2.convexHull(leftEye)
         rightEyeHull = cv2.convexHull(rightEye)
-        cv2.drawContours(self.frame, [leftEyeHull], -1, (0, 255, 0), 1)
-        cv2.drawContours(self.frame, [rightEyeHull], -1, (0, 255, 0), 1)
+        cv2.drawContours(self.imageData["image"], [leftEyeHull], -1, (0, 255, 0), 1)
+        cv2.drawContours(self.imageData["image"], [rightEyeHull], -1, (0, 255, 0), 1)
 
     def detectSleepy(self, ear):
         # function to determine if the person is actually drowsy or not
