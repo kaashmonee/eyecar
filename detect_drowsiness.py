@@ -29,7 +29,7 @@ from playsound import playsound
 class Detector(object):
 
     LANDMARK_DETECTOR = "./assets/shape_predictor_68_face_landmarks.dat"
-    ALARM_SOUND_PATH = "/home/skanda/Documents/eyecar/assets/alarm.wav"
+    ALARM_SOUND_PATH = "./assets/alarm.wav"
     
 
     EYE_ASP_RAT_THRESHOLD = 0.3
