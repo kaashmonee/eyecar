@@ -19,7 +19,7 @@ class DetectDrowsy(object):
         self.done = False
         self.image = []
         self.detector = detect_drowsiness.Detector()
-        self.imageData = {"framesElapsed": 0, "counter": 0}
+        self.imageData = {"image": None, "framesElapsed": 0}
 
     def timerFired(self):
 
@@ -39,7 +39,8 @@ class DetectDrowsy(object):
         img = cv2.imdecode(imgNp,-1)
         # put the image on screen
         self.image = img
-        self.drowsy = detector.detectDrowsiness(self.imageData)
+        self.imageData["image"] = self.image
+        self.drowsy = self.detector.detectDrowsiness(self.imageData)
         self.image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
         self.image = cv2.flip(self.image, 1)
         self.image = np.rot90(self.image)
