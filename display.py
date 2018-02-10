@@ -6,7 +6,8 @@ import numpy as np
 import sys
 import threading
 import time
-import detect_drowsiness
+from detect_drowsiness import *
+
 
 class DetectDrowsy(object):
     def __init__(self, width=500, height=500):
@@ -20,15 +21,17 @@ class DetectDrowsy(object):
         self.image = []
         self.detector = detect_drowsiness.Detector()
         self.imageData = {"image": None, "framesElapsed": 0}
+        self.camera = cv2.VideoCapture(0)
 
     def timerFired(self):
 
-        #host = "128.237.204.25:8080/shot.jpg"
-        host = "128.237.136.203:8080/shot.jpg"
+        host = "128.237.204.25:8080/shot.jpg"
+        #host = "128.237.136.203:8080/shot.jpg"
 
         if len(sys.argv)>1:
             host = sys.argv[1]
 
+        # for streaming video
         url = 'http://' + host
         imgResp = urllib.request.urlopen(url)
 
@@ -45,6 +48,18 @@ class DetectDrowsy(object):
         self.image = cv2.flip(self.image, 1)
         self.image = np.rot90(self.image)
         self.image = pygame.surfarray.make_surface(self.image)
+
+
+        # for monitoring the user
+        ret, self.frame = self.camera.read()
+
+        self.frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
+        self.frame = self.frame[0:1000, 310:910]
+        self.frame = cv2.resize(self.frame, (180, 240), interpolation = cv2.INTER_LINEAR)
+        self.frame = cv2.flip(self.frame, 1)
+        self.frame = np.rot90(self.frame)
+        self.frame = pygame.surfarray.make_surface(self.frame)
+
         pygame.display.flip()
         time.sleep(0.0001)
         # Quit if q is pressed
@@ -52,12 +67,14 @@ class DetectDrowsy(object):
             self.done = True
 
     def redrawAll(self, screen):
-        #if len(self.image) != 0:
         screen.fill([0,0,0])
 
         screen.blit(self.image, (0,0))
-        #if self.done == True: return
+        if self.done == True: return
         color = (0, 100, 100)
+
+        if self.frame != None:
+            screen.blit(self.frame, (self.width * .75,self.height * .05))
 
         path = "images/steering.png"
         image = pygame.transform.scale(pygame.image.load(path),(720, 720))  # rotate
@@ -81,12 +98,6 @@ class DetectDrowsy(object):
         rot_image = rot_image.subsurface(rot_rect).copy()
         return rot_image
 
-    # def rot_center(image, rect, angle):
-    #     """rotate an image while keeping its center"""
-    #     rot_image = pygame.transform.rotate(image, angle)
-    #     rot_rect = rot_image.get_rect(center=rect.center)
-    #     return rot_image,rot_rect
-
     def mousePressed(self, x, y):
         pass
 
@@ -107,7 +118,6 @@ class DetectDrowsy(object):
                     self.mousePressed(*(event.pos))
             self.redrawAll(screen)
             pygame.display.flip()
-
         pygame.quit()
 
 def main():
