@@ -30,7 +30,8 @@ class Detector(object):
         self.counter = 0
         self.alarmOn = False
         self.detector = dlib.get_frontal_face_detector()
-        self.predictor = dlib.shape_predictor(LANDMARK_DETECTOR)
+        self.predictor = dlib.shape_predictor(Detector.LANDMARK_DETECTOR)
+        self.cap = cv2.VideoCapture(0)
 
 
     def soundAlarm(self):
@@ -57,10 +58,13 @@ class Detector(object):
     
     def detectDrowsiness(self):
         while True:
-            self.videoStream = VideoStream("webcam").start() # LOOK AT THIS PARAM
-            self.frame = self.videoStream.read()
-            self.frame = imutils.resize(self.frame, width=250)
+            ret, self.frame = self.cap.read() 
+            # self.frame = imutils.resize(self.frame, width=250)
             self.gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
+            cv2.imshow("black and white", self.gray)
+
+            if cv2.waitKey(1) & 0xFF == ord("q"):
+                    break
 
             # detects faces in grayscale form
             self.rects = self.detector(self.gray, 0)
@@ -83,6 +87,12 @@ class Detector(object):
 
         # compute the euclidean distance between the horizontal  
         # eye landmarks
+
+class Landmark(object):
+
+    def __init__(self, leftTuple, rightTuple):
+        self.leftTuple = leftTuple
+        self.rightTuple = rightTuple
         
 
 def main():
