@@ -16,12 +16,21 @@ import time
 import dlib
 import cv2
 import sys
+import os
+import gi
+# import simpleaudio as sa
+# import wave
+# import pygame
+from playsound import playsound
+# import pyaudio
+# import wave
 
 
 class Detector(object):
 
     LANDMARK_DETECTOR = "./assets/shape_predictor_68_face_landmarks.dat"
-    ALARM_SOUND_PATH = "./assets/Airhorn-SoundBible.com-975027544.wav"
+    ALARM_SOUND_PATH = "/home/skanda/Documents/eyecar/assets/alarm.wav"
+    
 
     EYE_ASP_RAT_THRESHOLD = 0.3
     EYE_CLOSED_CONSEC_FRAMES = 20
@@ -40,9 +49,27 @@ class Detector(object):
         # starts the video capture using the webcam (param 0)  
         self.cap = cv2.VideoCapture(0)
 
+        # waveRead = wave.open(Detector.ALARM_SOUND_PATH, "rb")
+        # self.wavObj = sa.WaveObject.from_wave_read(waveRead)
+        # self.wavObj = sa.WaveObject.from_wave_file(Detector.ALARM_SOUND_PATH)
+        # print("CWD:", os.getcwd())
+        # pygame.mixer.init()
+        # pygame.mixer.music.load(Detector.ALARM_SOUND_PATH)
+
+
+
     def soundAlarm(self):
         # plays an alarm sound
-        playsound.playsound(Detector.ALARM_SOUND_PATH)
+        # playsound.playsound(Detector.ALARM_SOUND_PATH)
+        # os.system("aplay ~/Documents/eyecar/assets/Airhorn-SoundBible.com-975027544.wav")
+        # self.stream = self.audioDriver.open(format=self.audioDriver()
+        # self.playObject = self.wavObj.play()
+        # self.playObject.wait_done()
+        # pygame.mixer.music.play()
+        playsound(Detector.ALARM_SOUND_PATH)
+
+    # def stopAlarm(self):
+        # self.playObject.stop()
 
         
     def eyeAspectRatio(self, eye):
@@ -171,6 +198,7 @@ class EyeLandmark(object):
         
 
 def main():
+    print(os.getcwd())
     d = Detector()
     d.detectDrowsiness()
 
