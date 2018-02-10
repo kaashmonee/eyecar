@@ -97,8 +97,8 @@ class Detector(object):
         rightEyeHull = cv2.convexHull(rightEye)
         print("leftEyeHull", leftEyeHull)
         print("rightEyeHull", rightEyeHull)
-        cv2.drawContours(self.frame, [leftEyeHull], -1, (0, 255, 0), 1)
-        cv2.drawContours(self.frame, [rightEyeHull], -1, (0, 255, 0), 1)
+        cv2.drawContours(self.frame, leftEyeHull, -1, (0, 255, 0), 1)
+        cv2.drawContours(self.frame, rightEyeHull, -1, (0, 255, 0), 1)
 
 
 
