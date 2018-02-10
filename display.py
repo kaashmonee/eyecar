@@ -1,5 +1,11 @@
 import pygame
 import math
+import cv2
+import urllib.request
+import numpy as np
+import sys
+import threading
+import time
 
 class DetectDrowsy(object):
     def __init__(self, width=500, height=500):
@@ -9,29 +15,57 @@ class DetectDrowsy(object):
         self.width = width
         self.height = height
         self.frameRate = 5
+        self.done = False
+        self.image = []
 
     def timerFired(self):
-        pass
+
+        #host = "128.237.204.25:8080/shot.jpg"
+        host = "128.237.136.203:8080/shot.jpg"
+
+        if len(sys.argv)>1:
+            host = sys.argv[1]
+
+        url = 'http://' + host
+        imgResp = urllib.request.urlopen(url)
+
+        # Numpy to convert into a array
+        imgNp = np.array(bytearray(imgResp.read()),dtype=np.uint8)
+
+        # Finally decode the array to OpenCV usable format ;)
+        img = cv2.imdecode(imgNp,-1)
+        # put the image on screen
+        self.image = img
+        self.image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
+        self.image = cv2.flip(self.image, 1)
+        self.image = np.rot90(self.image)
+        self.image = pygame.surfarray.make_surface(self.image)
+        pygame.display.flip()
+        time.sleep(0.0001)
+        # Quit if q is pressed
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            self.done = True
 
     def redrawAll(self, screen):
+        #if len(self.image) != 0:
+        screen.fill([0,0,0])
+
+        screen.blit(self.image, (0,0))
+        #if self.done == True: return
         color = (0, 100, 100)
-        pygame.draw.rect(screen, color, pygame.Rect(0, 0, self.width, self.height))
 
         path = "images/steering.png"
-        image = pygame.transform.scale(pygame.image.load(path),(1024, 1024))  # rotate
+        image = pygame.transform.scale(pygame.image.load(path),(720, 720))  # rotate
         theta = self.angle * math.pi/180
         screen.blit(self.rot_center(image, self.angle),
-            (self.width*.1,
-            self.height*.2))
-        """screen.blit(image,
-            (self.width * .10 - ((724*math.sin(theta))/(math.sin((math.pi-theta)/2))*math.cos(math.pi/4)),
-            self.height * .2 - ((724*math.sin(theta))/(math.sin((math.pi-theta)/2))*math.sin(math.pi/4))))"""
+            (self.width*.13,
+            self.height*.53))
 
     def keyPressed(self, keyCode, modifier):
         if keyCode == pygame.K_LEFT and self.angle < 60:
-            self.angle += 5
+            self.angle += 10
         elif keyCode == pygame.K_RIGHT and self.angle > -60:
-            self.angle -= 5
+            self.angle -= 10
 
     def rot_center(self,image, angle):
         """rotate an image while keeping its center and size"""
@@ -66,13 +100,13 @@ class DetectDrowsy(object):
                     self.keyPressed(event.key, event.mod)
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     self.mousePressed(*(event.pos))
-                self.redrawAll(screen)
+            self.redrawAll(screen)
             pygame.display.flip()
 
         pygame.quit()
 
 def main():
-    drive = DetectDrowsy(1600, 1000)
+    drive = DetectDrowsy(960, 720)
     drive.run()
 
 if __name__ == '__main__':
