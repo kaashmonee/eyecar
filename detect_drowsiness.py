@@ -17,7 +17,7 @@ import dlib
 import cv2
 import sys
 import os
-import gi
+# import gi
 # import simpleaudio as sa
 # import wave
 # import pygame
