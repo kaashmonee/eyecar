@@ -25,8 +25,8 @@ class DetectDrowsy(object):
 
     def timerFired(self):
 
-        host = "128.237.204.25:8080/shot.jpg"
-        #host = "128.237.136.203:8080/shot.jpg"
+        # host = "128.237.204.25:8080/shot.jpg"
+        host = "128.237.136.203:8080/shot.jpg"
 
         if len(sys.argv)>1:
             host = sys.argv[1]
@@ -42,11 +42,7 @@ class DetectDrowsy(object):
         img = cv2.imdecode(imgNp,-1)
         # put the image on screen
         self.image = img
-        self.imageData["image"] = self.image
-        self.imageData['framesElapsed'] += 1
-        self.drowsy = self.detector.detectDrowsiness(self.imageData)
-        #if self.drowsy:
-            #self.imageData['framesElapsed'] = 0
+
         self.image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
         self.image = cv2.flip(self.image, 1)
         self.image = np.rot90(self.image)
@@ -57,6 +53,12 @@ class DetectDrowsy(object):
         ret, self.frame = self.camera.read()
 
         self.frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
+        self.imageData["image"] = self.frame
+        self.imageData['framesElapsed'] += 1
+        self.drowsy, self.imageData["image"] = self.detector.detectDrowsiness(self.imageData)
+        if self.drowsy:
+            self.imageData['framesElapsed'] = 0
+            print("drowsy")
         self.frame = self.frame[0:1000, 310:910]
         self.frame = cv2.resize(self.frame, (180, 240), interpolation = cv2.INTER_LINEAR)
         self.frame = np.rot90(self.frame)

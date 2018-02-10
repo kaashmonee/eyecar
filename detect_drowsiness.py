@@ -145,15 +145,21 @@ class Detector(object):
                 ear = (leftEAR + rightEAR) / 2.0
 
                 self.drawEyes(leftEye, rightEye)
+<<<<<<< HEAD
                 self.detectSleepy(ear)
 
             
             
             cv2.imshow("frame", self.imageData["image"])
+=======
+                return(self.detectSleepy(ear, self.imageData== None), self.imageData['image'])
+
+            #cv2.imshow("frame", self.frame)
+>>>>>>> master
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 sys.exit(0)
 
-            print("Loop terminates")
+            #print("Loop terminates")
 
 
     def drawEyes(self, leftEye, rightEye):
@@ -183,12 +189,22 @@ class Detector(object):
 
                 # alerting the user that there is some drowsiness on
                 # the screen
+<<<<<<< HEAD
                 cv2.putText(self.imageData["image"], "fuckface you are drowsy", (10, 30),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
                 cv2.putText(self.imageData["image"], "EAR: {:.2f}".format(ear), (300, 30),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
             if self.externalCall:
+=======
+                cv2.putText(self.imageData['image'], "fuckface you are drowsy", (10, 30),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
+                cv2.putText(self.imageData['image'], "EAR: {:.2f}".format(ear), (300, 30),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                return True
+            if externalCall:
+>>>>>>> master
                 return True
 
 
