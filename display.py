@@ -31,7 +31,7 @@ class DetectDrowsy(object):
 
     def timerFired(self):
 
-        host = "128.237.204.25:8080/shot.jpg"
+        host = "192.168.43.149:8080/shot.jpg"
         # host = "128.237.136.203:8080/shot.jpg"
 
         if len(sys.argv)>1:
@@ -71,7 +71,7 @@ class DetectDrowsy(object):
         if self.drowsy:
             self.imageData['framesElapsed'] = 0
             print("drowsy")
-            #transmit('stop')
+            transmit('stop')
 
         self.frame = self.frame[0:1000, 310:910]
         self.frame = cv2.resize(self.frame, (180, 240), interpolation = cv2.INTER_LINEAR)
@@ -112,16 +112,16 @@ class DetectDrowsy(object):
         if not self.drowsy and not self.threshold % 12000 != 0:
             if keyCode == pygame.K_LEFT and self.angle < 60:
                 self.angle += 10
-                #transmit('left')
+                transmit("left")
             elif keyCode == pygame.K_RIGHT and self.angle > -60:
                 self.angle -= 10
-                #transmit('right')
+                transmit("right")
             elif keyCode == pygame.K_UP:
-                pass
-                #transmit('forward')
+                transmit("forward")
             elif keyCode == pygame.K_DOWN:
-                pass
-                #transmit('back')
+                transmit("back")
+            elif keyCode == pygame.K_SPACE:
+                transmit("stop")
 
     def rot_center(self,image, angle):
         """rotate an image while keeping its center and size"""
@@ -169,12 +169,11 @@ def transmit(message):
 
 def send(s, message):
     s.send(str.encode(message))
-    s.close()
     return
 
 def main():
     global s
-    #s = setup()
+    s = setup()
     drive = DetectDrowsy(960, 720)
     drive.run()
 
