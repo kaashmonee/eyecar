@@ -22,6 +22,7 @@ class DetectDrowsy(object):
         self.detector = detect_drowsiness.Detector()
         self.imageData = {"image": None, "framesElapsed": 0}
         self.camera = cv2.VideoCapture(0)
+        self.threshold = 0
 
     def timerFired(self):
 
@@ -51,21 +52,28 @@ class DetectDrowsy(object):
 
         # for monitoring the user
         ret, self.frame = self.camera.read()
-
         self.frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
         self.imageData["image"] = self.frame
         self.imageData['framesElapsed'] += 1
-        self.drowsy, self.imageData["image"] = self.detector.detectDrowsiness(self.imageData)
+
+        data = self.detector.detectDrowsiness(self.imageData)
+        try:
+            self.imageData["image"] = data[1]
+            self.drowsy = data[0]
+        except:
+            pass
+
         if self.drowsy:
             self.imageData['framesElapsed'] = 0
             print("drowsy")
+
         self.frame = self.frame[0:1000, 310:910]
         self.frame = cv2.resize(self.frame, (180, 240), interpolation = cv2.INTER_LINEAR)
         self.frame = np.rot90(self.frame)
         self.frame = pygame.surfarray.make_surface(self.frame)
 
-        #pygame.display.flip()
-        time.sleep(0.0001)
+        pygame.display.flip()
+        time.sleep(0.001)
         # Quit if q is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):
             self.done = True
@@ -73,6 +81,7 @@ class DetectDrowsy(object):
     def redrawAll(self, screen):
         screen.fill([0,0,0])
 
+        # pygame.draw.rect(screen, (192, 192, 192), (self.width * .07, self.height * .82, self.width * .03,self.height * .05))
         screen.blit(self.image, (0,0))
         if self.done == True: return
         color = (0, 100, 100)
@@ -86,6 +95,12 @@ class DetectDrowsy(object):
         screen.blit(self.rot_center(image, self.angle),
             (self.width*.13,
             self.height*.53))
+
+        if self.drowsy or self.threshold % 7000 != 0:
+            self.threshold += pygame.time.Clock().get_time() + 1000
+            message = "YOU ARE SLEEP! YOU WILL STOP DRIVING!"
+            text = pygame.font.SysFont('monospace', 40).render(message, 1,(255, 0, 0))
+            screen.blit(text, (self.width * .07, self.height * .1))
 
     def keyPressed(self, keyCode, modifier):
         if keyCode == pygame.K_LEFT and self.angle < 60:
