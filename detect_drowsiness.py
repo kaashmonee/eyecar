@@ -1,5 +1,5 @@
 
-# Drowsiness detection Adrian Rosebrock
+# Drowsiness detection for TartanHacks inspired by Adrian Rosebrock
 # importing necessary packages
 
 from scipy.spatial import distance as dist
