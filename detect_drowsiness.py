@@ -107,14 +107,15 @@ class Detector(object):
 
         while True:
             # if the client sends in image data, then we don't use our own
-            if self.externalCall:
+
+            if imageData != None: self.externalCall = True
+
+            if not self.externalCall:
                 ret, self.frame = self.cap.read()
-                self.frame = cv2.flip(self.frame, 1)
+                self.imageData["image"] = self.frame.flip(1)
                 # self.frame = imutils.resize(self.frame, width=250)
             else:
                 self.imageData = imageData
-                self.frame = self.imageData["image"]
-                self.counter = self.imageData["framesElapsed"]
 
             self.gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
             # converts from color to grayscale
@@ -143,7 +144,7 @@ class Detector(object):
                 ear = (leftEAR + rightEAR) / 2.0
 
                 self.drawEyes(leftEye, rightEye)
-                self.detectSleepy(ear, self.imageData == None)
+                self.detectSleepy(ear)
 
             
             
@@ -160,17 +161,16 @@ class Detector(object):
         cv2.drawContours(self.frame, [leftEyeHull], -1, (0, 255, 0), 1)
         cv2.drawContours(self.frame, [rightEyeHull], -1, (0, 255, 0), 1)
 
-    def detectSleepy(self, ear, externalCall):
+    def detectSleepy(self, ear):
         # function to determine if the person is actually drowsy or not
         # if the aspect ratio of the eyes closed is smaller than the necessary
         # threshold
         if ear < Detector.EYE_ASP_RAT_THRESHOLD:
             self.counter += 1
-            if externalCall:
-                self.imageData["framesElapsed"] += 1
+            self.imageData["framesElapsed"] += 1
 
 
-            if self.counter >= Detector.EYE_CLOSED_CONSEC_FRAMES:
+            if self.imageData["framesElapsed"] >= Detector.EYE_CLOSED_CONSEC_FRAMES:
                 # turns on the alarm if alarm is not true
                 alarmOn = True if not self.alarmOn else False
 
@@ -181,17 +181,17 @@ class Detector(object):
 
                 # alerting the user that there is some drowsiness on
                 # the screen
-                cv2.putText(self.frame, "fuckface you are drowsy", (10, 30),
+                cv2.putText(self.imageData["image"], "fuckface you are drowsy", (10, 30),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
-                cv2.putText(self.frame, "EAR: {:.2f}".format(ear), (300, 30),
+                cv2.putText(self.imageData["image"], "EAR: {:.2f}".format(ear), (300, 30),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-            if externalCall:
+            if self.externalCall:
                 return True
 
 
         else:
-            if externalCall:
+            if self.externalCall:
                 self.imageData["framesElapsed"] = 0
                 return False
             self.counter = 0
