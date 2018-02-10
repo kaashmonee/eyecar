@@ -31,7 +31,11 @@ class Detector(object):
 
     LANDMARK_DETECTOR = "./assets/shape_predictor_68_face_landmarks.dat"
     ALARM_SOUND_PATH = "./assets/alarm.wav"
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> d58cfd0c06ca0ad8597a867d1b07523f377426db
 
     EYE_ASP_RAT_THRESHOLD = 0.3
     EYE_CLOSED_CONSEC_FRAMES = 20
