@@ -43,7 +43,6 @@ class DetectDrowsy(object):
 
         # Numpy to convert into a array
         imgNp = np.array(bytearray(imgResp.read()),dtype=np.uint8)
-
         # Finally decode the array to OpenCV usable format ;)
         img = cv2.imdecode(imgNp,-1)
         # put the image on screen
